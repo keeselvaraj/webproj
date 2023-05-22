@@ -1,0 +1,239 @@
+<!DOCTYPE html> 
+<html>
+<head>
+<style>
+@font-face {
+  font-family: 'MyFont';
+  src: url('./fonts/CiscoSansTTExtraLight.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'MyFont-1';
+  src: url('./fonts/CiscoSansTTBold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+.body{font-family: 'MyFont'}
+
+footer {
+  background-color: rgb(13,39,77); 
+  color:white;
+  font-family: 'MyFont';
+  padding: 10px;
+  text-align: left;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+body{ 
+  width:100%;
+  height: 100vh;
+  background-color: white ;
+   justify-content: center;
+  align-items: center;
+}
+
+.container-1{
+  margin:0 auto;
+  width:575px; 
+  position: absolute;
+top: 70%;
+left: 50%;
+transform: translate(-50%, -50%);    
+  border:1px solid #dcdcdc;
+}
+.container-1:hover{
+  box-shadow: 1px 1px 8px 1px #dcdcdc;
+}
+.container-1:focus-within{
+  box-shadow: 1px 1px 8px 1px #dcdcdc;
+  outline:none;
+}
+.container-2{
+  margin: 0 auto;
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  
+
+}
+#gif{
+  left: 200px !important; 
+  background-color:blue !important;
+}
+.voice{
+  height:20px;
+  position:relative;
+  top:5px;
+  left:30px;
+}
+.autocomplete-input{
+height:45px;
+border:none;
+width:500px;
+font-size:16px;
+outline: none;
+font-family: 'MyFont-1';
+
+}
+.autocomplete-input::placeholder{
+  color:grey; 
+  font-family: 'MyFont';
+}
+.autocomplete-list{
+  list-style-type:none;
+  margin: 0;
+  padding: 0;
+  background-color: #FFF;
+  width: 100%;
+  background-color: #FFF;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto; 
+  font-family: 'MyFont-1';
+}
+.autocomplete-list li{
+  color: black;
+  padding: 15px; 
+  width: calc(100%-30px); 
+  font-weight: bold;
+  cursor: pointer;
+  font-family: 'MyFont-1';
+}
+.navbar-custom{
+  background-color: rgb(13,39,77); 
+  color: white;
+} 
+.white-text {
+    font-family: 'MyFont';
+    color: white;
+  }
+
+</style>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</head>
+<nav class="navbar navbar-custom">
+    <a class="navbar-brand d-flex align-items-center" href="#">
+      <img id="elm" src="./assets/navbar logo.png" width="50" height="50" class="mr-2" alt=""> <span id="search-text" class="white-text">Supplier Search Across Cisco</span>
+    </a>
+    <span class="navbar-text">
+      <div class="navbar-nav">
+        <a class="nav-item nav-link active" href="#about"></a>   
+      </div>
+    </span>
+  </nav>
+<body>      
+    <div class="container-2">
+    <img id="gif" src="./assets/main logo.gif" alt="gif"> </div>
+    <div class="container-1">
+        
+            <input type="text" id="sup-input" class="autocomplete-input"
+             placeholder="Search for a supplier" >
+             <a href="#">
+            <img id="search-click" class="voice" src="./assets/search.png" title="Search" ></a>
+             <ul class="autocomplete-list" id="sup-list"></ul>
+    </div>
+        <footer>
+            <p>&copy;2023 Webcontent.All rights reserved.</p>
+        </footer>
+        </body>
+        <script>
+// Smooth scrolling
+
+let supplier=[]
+const sup_lis_ele=document.querySelector('#sup-list')
+const sup_inp=document.querySelector('#sup-input') 
+const img_tag=document.querySelector('#search-click')
+
+function fetchSupplier() {
+  fetch('./data.json')
+    .then((response) => response.json())
+    .then((data) => {
+      supplier = data.map((x) => x.NAME);
+      supplier.sort();
+      console.log('Data loaded successfully.');
+    })
+    .catch((error) => {
+      console.error('Failed to load data', error);
+    });
+}
+
+function loadData(data, element) {
+  if (data.length > 0) {
+    let innerElement = '';
+    data.forEach((item) => {
+      innerElement += `<li>${item}</li>`; 
+    });
+    element.innerHTML = innerElement;
+    
+
+    const listItems = element.querySelectorAll('li');
+    listItems.forEach((item) => {
+      item.addEventListener('click', function () {
+        sup_inp.value = item.textContent;
+        sup_lis_ele.style.display = 'none';
+      });
+    });
+  
+  img_tag.disabled = false;}
+ else {
+  element.innerHTML = '<li>No results found.</li>';
+  if (element.innerHTML === '<li>No results found.</li>') {
+    img_tag.disabled = true;
+  }
+}
+}
+
+function filterData(searchText) {
+  const filteredData = supplier.filter((x) =>
+    x.toLowerCase().includes(searchText.toLowerCase())
+  );
+  loadData(filteredData, sup_lis_ele);
+}
+let k=0;
+sup_inp.addEventListener('input', function () { 
+  
+  const searchText = sup_inp.value.trim();
+  if (searchText) {
+    filterData(searchText);
+  } else {
+    sup_lis_ele.innerHTML = '';
+    sup_lis_ele.style.display = 'none';
+  }
+});
+
+fetchSupplier();
+img_tag.addEventListener('click', function () { 
+  if(sup_inp.value==""){
+    alert("Enter a supplier name")
+    return 0
+  }
+  const textsearch=sup_inp.value
+  localStorage.setItem('Search-value',textsearch)
+  window.location.href="dashboard.html"
+});
+
+//Click outside the page drop down shld hid
+document.addEventListener('click', function(event){
+  if (!sup_inp.contains(event.target) &&  !sup_lis_ele.contains(event.target)){
+    sup_lis_ele.style.display='none';}
+  else{
+    sup_lis_ele.style.display='block';
+  }
+  });
+const gif = document.getElementById('gif');
+gif.addEventListener('load', function() {
+  setTimeout(function() {
+    gif.src = "./assets/new.png";
+  }, 2000); 
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+
+
+
+</html> 

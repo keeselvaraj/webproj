@@ -1,0 +1,19 @@
+[
+    {
+        "ID":1,
+        "NAME":"ALPHA"
+    },
+    {
+        "ID":2,
+        "NAME":"BETA"
+
+    }, 
+    {
+        "ID":3,
+        "NAME":"CETA"
+    },
+    {
+        "ID":4,
+        "NAME":"GAMMA"
+    }
+]
